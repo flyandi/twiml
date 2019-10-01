@@ -405,10 +405,25 @@ type Say struct {
 	Language string   `xml:"language,attr,omitempty"`
 	Loop     int      `xml:"loop,attr,omitempty"`
 	Text     string   `xml:",chardata"`
+	Children []Markup `valid:"-"`
 }
 
 // Validate returns an error if the TwiML is constructed improperly
 func (s *Say) Validate() error {
+
+	var errs []error
+
+	for _, sm := range s.Children {
+		switch t := s.Type(); t {
+		default:
+			return fmt.Errorf("Not a valid verb as child of Gather: '%T'", s)
+		case "SSMLP", "SSMLText", "SSMLBreak", "SSMLEmphasis", "SSMLProsody", "SSMLSub", "SSMLS", "SSMLSayAs", "SSMLWords":
+			if childErr := sm.Validate(); childErr != nil {
+				errs = append(errs, childErr)
+			}
+		}
+	}
+
 	ok := Validate(
 		OneOfOpt(s.Voice, Man, Woman, Alice),
 		AllowedLanguage(s.Voice, s.Language),
