@@ -99,3 +99,37 @@ func TestTwimlQuotedString(t *testing.T) {
 		return
 	}
 }
+
+func TestTwimlMultiMixQuotedString(t *testing.T) {
+
+	s := "{say|`Quoted, String`,voice:female}{say|`Another quote`}{say|Whats happening?}"
+	m := ParseString(s)
+
+	if m == nil || len(m) != 3 {
+		t.Errorf("Failed to parse string")
+		return
+	}
+
+	if m[0].Type() != "Say" {
+		t.Errorf("Failed to parse into correct type. Expected Say got %s", m[0].Type())
+		return
+	}
+
+	a := m[0].(*Say)
+	if a.Text != "Quoted, String" {
+		t.Errorf("Failed to parse into correct quoted string. Got %s", a.Text)
+		return
+	}
+
+	b := m[1].(*Say)
+	if b.Text != "Another quote" {
+		t.Errorf("Failed to parse into correct quoted string. Got %s", b.Text)
+		return
+	}
+
+	c := m[2].(*Say)
+	if c.Text != "Whats happening?" {
+		t.Errorf("Failed to parse into correct quoted string. Got %s", c.Text)
+		return
+	}
+}

@@ -46,9 +46,9 @@ func ParseString(s string) []Markup   {
 				pp := []string{}
 				if len(statement) > 1 {
 
-					attr := statement[1];
+					attr := statement[1]
 					ru := regexp.MustCompile("\\`(.*?)\\`")
-					rm := ru.FindStringSubmatch(s)
+					rm := ru.FindStringSubmatch(attr)
 
 					if rm != nil {
 						attr = strings.Replace(attr, rm[1] + ",", "", -1)
